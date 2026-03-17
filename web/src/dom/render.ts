@@ -39,11 +39,7 @@ export const render = {
 
     grid.innerHTML = '';
 
-    loadState();
-
     const state = getState();
-
-    console.log(state);
 
     const bikes = state.bikes;
     const currentUser = getCurrentUser();

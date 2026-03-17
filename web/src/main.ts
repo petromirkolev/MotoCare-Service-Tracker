@@ -1,12 +1,20 @@
-/* Entry point for the Moto Care Jobs web application. */
-
 import './style.css';
 import { bindEvents } from './ui/router';
 import { render } from './dom/render';
 import { getCurrentUser } from './state/auth-store';
+import { refreshBikes } from './state/state-store';
 
-const user = getCurrentUser();
+async function bootstrap() {
+  const user = getCurrentUser();
 
-user ? render.bikeScreen() : render.initialScreen();
+  if (user) {
+    await refreshBikes();
+    await render.bikeScreen();
+  } else {
+    render.initialScreen();
+  }
 
-bindEvents();
+  bindEvents();
+}
+
+bootstrap();

@@ -12,15 +12,11 @@ export function readBikeForm(form: HTMLFormElement) {
   const yearRaw: string = String(fd.get('year') ?? '').trim();
   const year: number = Number(yearRaw);
 
-  const odoRaw: string = String(fd.get('odo') ?? '').trim();
-  const odo: number = Number(odoRaw);
-
   if (!make) throw new Error('Make is required');
   if (!model) throw new Error('Model is required');
   if (!Number.isFinite(year)) throw new Error('Year must be a number');
-  if (!Number.isFinite(odo)) throw new Error('Odometer must be a number');
 
-  return { make, year, model, odo };
+  return { make, year, model };
 }
 
 export const bikeStore = {

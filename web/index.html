@@ -188,55 +188,61 @@
         <main class="page-shell" data-testid="shell-bikes">
           <section class="panel" data-testid="panel-bikes">
             <div class="panel-header" data-testid="header-bikes">
-              <h2 data-testid="heading-bikes">Bikes</h2>
               <p data-testid="text-bikes-description">
                 Add motorcycles that you want to manage
               </p>
             </div>
 
             <div class="content-grid" data-testid="content-bikes">
-              <form class="card form-card narrow" data-testid="form-add-bike">
-                <h3 data-testid="heading-add-bike">Add bike</h3>
+              <div class="stack">
+                <div class="section-row section-row--placeholder">
+                  <h3>Add bike</h3>
+                  <span class="muted">&nbsp;</span>
+                </div>
 
-                <label for="bike-make">
-                  Make
-                  <input
-                    id="bike-make"
-                    name="make"
-                    type="text"
-                    placeholder="Yamaha"
-                    data-testid="input-bike-make" />
-                </label>
+                <form class="card form-card narrow" data-testid="form-add-bike">
+                  <h3 data-testid="heading-add-bike">Add bike</h3>
 
-                <label for="bike-model">
-                  Model
-                  <input
-                    id="bike-model"
-                    name="model"
-                    type="text"
-                    placeholder="Tracer 9 GT"
-                    data-testid="input-bike-model" />
-                </label>
+                  <label for="bike-make">
+                    Make
+                    <input
+                      id="bike-make"
+                      name="make"
+                      type="text"
+                      placeholder="Yamaha"
+                      data-testid="input-bike-make" />
+                  </label>
 
-                <label for="bike-year">
-                  Year
-                  <input
-                    id="bike-year"
-                    name="year"
-                    type="number"
-                    placeholder="2021"
-                    data-testid="input-bike-year" />
-                </label>
+                  <label for="bike-model">
+                    Model
+                    <input
+                      id="bike-model"
+                      name="model"
+                      type="text"
+                      placeholder="Tracer 9 GT"
+                      data-testid="input-bike-model" />
+                  </label>
 
-                <div data-testid="message-bike-error"></div>
+                  <label for="bike-year">
+                    Year
+                    <input
+                      id="bike-year"
+                      name="year"
+                      type="number"
+                      placeholder="2021"
+                      data-testid="input-bike-year" />
+                  </label>
 
-                <button
-                  type="button"
-                  data-testid="btn-save-bike"
-                  data-action="save-bike">
-                  Save bike
-                </button>
-              </form>
+                  <div data-testid="message-bike-error"></div>
+
+                  <button
+                    type="button"
+                    data-testid="btn-save-bike"
+                    data-action="save-bike">
+                    Save bike
+                  </button>
+                </form>
+              </div>
 
               <div class="stack" data-testid="section-bikes-list">
                 <div class="section-row" data-testid="bikes-list-header">

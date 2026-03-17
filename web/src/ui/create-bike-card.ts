@@ -11,24 +11,36 @@ export function createBikeCard(bike: Bike): HTMLElement {
   article.setAttribute('data-testid', `card-bike-${id}`);
 
   article.innerHTML = `
-  <div>
-    <h4 data-testid="bike-name"></h4>
-    <p class="muted" data-testid="bike-meta"></p>
+  <div class="bike-card-main" data-testid="bike-card-main">
+    <div>
+      <h4 data-testid="bike-name"></h4>
+      <p class="muted" data-testid="bike-meta"></p>
+    </div>
+    <span class="tag" data-testid="bike-tag">Ready</span>
   </div>
-  <span class="tag" data-testid="bike-tag"></span>
+
+  <div class="bike-card-actions" data-testid="bike-card-actions">
+    <button
+      type="button"
+      class="ghost danger bike-delete-btn"
+      data-testid="btn-delete-bike"
+      data-action="delete-bike">
+      Delete
+    </button>
+  </div>
 `;
 
   const nameEl = article.querySelector('[data-testid="bike-name"]');
   const paraEl = article.querySelector('[data-testid="bike-meta"]');
-  const spanEl = article.querySelector('[data-testid="bike-tag"]');
+  const tagEl = article.querySelector('[data-testid="bike-tag"]');
 
-  if (!nameEl || !paraEl || !spanEl) {
+  if (!nameEl || !paraEl || !tagEl) {
     throw new Error('Bike card template missing expected elements');
   }
 
   nameEl.textContent = bike.make;
   paraEl.textContent = `${bike.year} ${bike.make} ${bike.model}`;
-  spanEl.textContent = 'Not ready';
+  tagEl.textContent = 'Not ready';
 
   return article;
 }

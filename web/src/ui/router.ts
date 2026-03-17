@@ -49,6 +49,7 @@ function bindEvents(): void {
           render.errorMessage('Login success, opening garage...', 'login');
 
           setTimeout(() => {
+            refreshBikes();
             render.bikeScreen();
           }, 1000);
         } catch (error) {
@@ -98,7 +99,9 @@ function bindEvents(): void {
           });
 
           await refreshBikes();
+
           addBikeForm.reset();
+
           render.bikeScreen();
         } catch (error) {
           error instanceof Error
