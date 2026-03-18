@@ -50,8 +50,8 @@ export const render = {
         bikes.length === 1 ? '1 motorcycle' : `${bikes.length} motorcycles`;
     }
 
-    bikes.forEach((bike) => {
-      grid.appendChild(createBikeCard(bike));
+    bikes.forEach(async (bike) => {
+      grid.appendChild(await createBikeCard(bike));
     });
 
     if (dom.emptyBikeGrid) {

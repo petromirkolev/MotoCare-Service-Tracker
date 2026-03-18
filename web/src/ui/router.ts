@@ -4,13 +4,15 @@ import {
   readRegForm,
   readLoginForm,
   setCurrentUser,
+  getCurrentUser,
 } from '../state/auth-store';
 import { registerUser, loginUser } from '../api/auth';
 import { readBikeForm } from '../state/bike-store';
 import { createBikeApi, deleteBikeApi } from '../api/bikes';
 import { refreshBikes, refreshJobs } from '../state/state-store';
 import { readJobForm } from '../state/job-store';
-import { createJobApi, updateJobStatusApi } from '../api/jobs';
+import { createJobApi, getJobsApi, updateJobStatusApi } from '../api/jobs';
+import { markJobs } from '../utils/dom-helper';
 
 type Action =
   | 'show-login-form'
@@ -26,7 +28,13 @@ type Action =
   | 'approve-job'
   | 'start-job'
   | 'complete-job'
-  | 'cancel-job';
+  | 'cancel-job'
+  | 'filter-jobs-all'
+  | 'filter-jobs-requested'
+  | 'filter-jobs-approved'
+  | 'filter-jobs-in-progress'
+  | 'filter-jobs-done'
+  | 'filter-jobs-cancelled';
 
 function bindEvents(): void {
   document.addEventListener('click', async (e: MouseEvent) => {
@@ -38,6 +46,8 @@ function bindEvents(): void {
     const action = el.dataset.action as Action;
     if (!action) return;
 
+    console.log(action);
+
     switch (action) {
       case 'show-login-form': {
         const forms = document.querySelectorAll('form');
@@ -45,12 +55,11 @@ function bindEvents(): void {
         render.loginScreen();
         break;
       }
-
-      case 'show-register-form':
+      case 'show-register-form': {
         render.registerScreen();
         break;
-
-      case 'login':
+      }
+      case 'login': {
         try {
           const loginForm = dom.loginForm as HTMLFormElement;
           const input = readLoginForm(loginForm);
@@ -71,8 +80,8 @@ function bindEvents(): void {
             : render.errorMessage('Something went wrong', 'login');
         }
         break;
-
-      case 'register':
+      }
+      case 'register': {
         try {
           const regForm = dom.registerForm as HTMLFormElement;
           const input = readRegForm(regForm);
@@ -92,12 +101,12 @@ function bindEvents(): void {
             : render.errorMessage('Something went wrong', 'register');
         }
         break;
-
-      case 'logout':
+      }
+      case 'logout': {
         setCurrentUser(null);
         render.initialScreen();
         break;
-
+      }
       case 'save-bike': {
         const addBikeForm = dom.addBikeForm as HTMLFormElement | null;
         if (!addBikeForm) throw new Error('Missing add bike form');
@@ -124,7 +133,6 @@ function bindEvents(): void {
         }
         break;
       }
-
       case 'delete-bike': {
         try {
           const bikeCard = target.closest<HTMLElement>('[data-bike-id]');
@@ -142,15 +150,14 @@ function bindEvents(): void {
         }
         break;
       }
-
-      case 'go-jobs':
+      case 'go-jobs': {
         await render.jobScreen();
         break;
-
-      case 'go-bikes':
+      }
+      case 'go-bikes': {
         await render.bikeScreen();
         break;
-
+      }
       case 'create-job': {
         const addJobForm = dom.addJobForm as HTMLFormElement | null;
         if (!addJobForm) throw new Error('Missing add job form');
@@ -195,7 +202,6 @@ function bindEvents(): void {
         }
         break;
       }
-
       case 'start-job': {
         try {
           const jobCard = target.closest<HTMLElement>('[data-job-id]');
@@ -213,7 +219,6 @@ function bindEvents(): void {
         }
         break;
       }
-
       case 'complete-job': {
         try {
           const jobCard = target.closest<HTMLElement>('[data-job-id]');
@@ -231,7 +236,6 @@ function bindEvents(): void {
         }
         break;
       }
-
       case 'cancel-job': {
         try {
           const jobCard = target.closest<HTMLElement>('[data-job-id]');
@@ -247,6 +251,31 @@ function bindEvents(): void {
         } catch (error) {
           console.error(error);
         }
+        break;
+      }
+      case 'filter-jobs-all': {
+        const jobCards = document.querySelectorAll<HTMLElement>('.job-card');
+        jobCards.forEach((card) => card.classList.remove('is-hidden'));
+        break;
+      }
+      case 'filter-jobs-requested': {
+        markJobs('requested');
+        break;
+      }
+      case 'filter-jobs-approved': {
+        markJobs('approved');
+        break;
+      }
+      case 'filter-jobs-in-progress': {
+        markJobs('in-progress');
+        break;
+      }
+      case 'filter-jobs-done': {
+        markJobs('done');
+        break;
+      }
+      case 'filter-jobs-cancelled': {
+        markJobs('cancelled');
         break;
       }
     }

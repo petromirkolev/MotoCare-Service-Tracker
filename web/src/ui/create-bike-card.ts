@@ -1,7 +1,11 @@
+import { getJobsApi } from '../api/jobs';
+import { getCurrentUser } from '../state/auth-store';
 import type { Bike } from '../types/bikes';
 
-export function createBikeCard(bike: Bike): HTMLElement {
+export async function createBikeCard(bike: Bike): Promise<HTMLElement> {
   const id = String(bike.id);
+  const user = getCurrentUser();
+  if (!user) throw new Error('No user found');
 
   const article = document.createElement('article');
   article.className = 'card bike-card';
@@ -15,7 +19,7 @@ export function createBikeCard(bike: Bike): HTMLElement {
       <p class="muted" data-testid="bike-meta"></p>
     </div>
     <div class="bike-card-actions" data-testid="bike-card-actions">
-      <span class="tag" data-testid="bike-tag">Not ready</span>
+      <span class="tag" data-testid="bike-tag"></span>
       <button type="button" class="ghost danger bike-delete-btn"
       data-testid="btn-delete-bike"
       data-bike-id="${id}"
@@ -32,9 +36,21 @@ export function createBikeCard(bike: Bike): HTMLElement {
     throw new Error('Bike card template missing expected elements');
   }
 
+  const jobs = await getJobsApi(user.id);
+
+  const allJobsDone = jobs.find((job: any) => {
+    return job.status !== 'done' && job.status !== 'cancelled';
+  });
+
+  if (allJobsDone) {
+    tagEl.textContent = 'Not ready';
+    tagEl.classList.add('notready');
+  } else {
+    tagEl.textContent = 'Ready';
+  }
+
   nameEl.textContent = bike.make;
   paraEl.textContent = `${bike.year} ${bike.make} ${bike.model}`;
-  tagEl.textContent = 'Not ready';
 
   return article;
 }

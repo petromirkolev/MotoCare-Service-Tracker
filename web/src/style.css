@@ -390,6 +390,10 @@ textarea::placeholder {
   white-space: nowrap;
 }
 
+.notready {
+  background: rgba(224, 126, 126, 0.14);
+}
+
 .toolbar {
   padding: 0.8rem;
 }
