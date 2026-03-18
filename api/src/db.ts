@@ -48,4 +48,26 @@ export const db = new sqlite3.Database(DB_PATH, (err) => {
       }
     },
   );
+
+  db.run(
+    `CREATE TABLE IF NOT EXISTS jobs (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    bike_id TEXT NOT NULL,
+    service_type TEXT NOT NULL,
+    odometer INTEGER NOT NULL,
+    note TEXT,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (bike_id) REFERENCES bikes(id)
+  )`,
+    (tableErr) => {
+      if (tableErr) {
+        console.error('Failed to create jobs table:', tableErr.message);
+        return;
+      }
+    },
+  );
 });

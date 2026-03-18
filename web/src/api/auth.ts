@@ -1,12 +1,11 @@
 /* This file contains functions for user authentication, including registration and login. */
 
+import { API_BASE_URL } from './base';
 import type {
   RegisterResponse,
   ErrorResponse,
   LoginResponse,
 } from '../types/auth';
-
-const API_BASE_URL = 'http://localhost:3001';
 
 export async function registerUser(
   email: string,

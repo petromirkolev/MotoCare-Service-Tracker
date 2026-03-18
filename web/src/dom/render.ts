@@ -1,9 +1,10 @@
 import { dom } from './selectors';
 import { req } from '../utils/dom-helper';
 import { showScreen, showAuthForm } from '../ui/show-screen';
-import { getState } from '../state/state-store';
+import { getState, refreshBikes, refreshJobs } from '../state/state-store';
 import { getCurrentUser } from '../state/auth-store';
 import { createBikeCard } from '../ui/create-bike-card';
+import { createJobCard } from '../ui/create-job-card';
 
 export const render = {
   initialScreen(): void {
@@ -25,51 +26,115 @@ export const render = {
     this.errorMessage('', 'register');
   },
 
-  async bikeScreen(): Promise<any> {
+  async bikeScreen(): Promise<void> {
     showScreen('bikes');
+    await refreshBikes();
+
     dom.navBikes?.classList.add('active');
     dom.navJobs?.classList.remove('active');
 
     const grid = req(dom.bikeGrid, 'bikeGrid');
-
     grid.innerHTML = '';
 
-    const state = getState();
-
-    const bikes = state.bikes;
+    const { bikes } = getState();
     const currentUser = getCurrentUser();
 
-    req(dom.currentUserEmail, 'currentUserEmail').textContent =
-      `Hello, ${currentUser?.email}!`;
-    req(dom.bikesCount, 'bikesCount').textContent =
-      bikes.length > 1 || bikes.length === 0
-        ? `${bikes.length} motorcycles`
-        : `${bikes.length} motorcycle`;
+    if (dom.currentUserEmail) {
+      dom.currentUserEmail.textContent = currentUser
+        ? `Hello, ${currentUser.email}!`
+        : '';
+    }
 
-    bikes.forEach((bike: any) => grid.appendChild(createBikeCard(bike)));
+    if (dom.bikesCount) {
+      dom.bikesCount.textContent =
+        bikes.length === 1 ? '1 motorcycle' : `${bikes.length} motorcycles`;
+    }
 
-    bikes.length > 0
-      ? req(dom.emptyBikeGrid, 'emptyBikeGrid').classList.add('is-hidden')
-      : req(dom.emptyBikeGrid, 'emptyBikeGrid').classList.remove('is-hidden');
+    bikes.forEach((bike) => {
+      grid.appendChild(createBikeCard(bike));
+    });
+
+    if (dom.emptyBikeGrid) {
+      if (bikes.length > 0) {
+        dom.emptyBikeGrid.classList.add('is-hidden');
+      } else {
+        dom.emptyBikeGrid.classList.remove('is-hidden');
+      }
+    }
   },
 
-  jobScreen(): void {
+  async jobScreen(): Promise<void> {
+    const currentUser = getCurrentUser();
+
+    if (!currentUser) {
+      showScreen('auth');
+      return;
+    }
+
     showScreen('jobs');
+
     dom.navJobs?.classList.add('active');
     dom.navBikes?.classList.remove('active');
 
-    const state = getState();
-    state.bikes.forEach((bike) => {
+    if (dom.currentUserEmail) {
+      dom.currentUserEmail.textContent = `Hello, ${currentUser.email}!`;
+    }
+
+    await refreshBikes();
+    await refreshJobs();
+
+    this.populateJobBikeSelect();
+    this.renderJobsList();
+  },
+
+  populateJobBikeSelect(): void {
+    if (!dom.jobBikeSelect) return;
+
+    const { bikes } = getState();
+
+    dom.jobBikeSelect.innerHTML = '';
+
+    for (const bike of bikes) {
       const option = document.createElement('option');
-      option.value = bike.id;
+      option.value = String(bike.id);
       option.textContent = `${bike.make} ${bike.model}`;
-      dom.bikesDropdown?.appendChild(option);
-    });
+      dom.jobBikeSelect.appendChild(option);
+    }
+  },
+
+  renderJobsList(): void {
+    if (!dom.jobList || !dom.emptyJobs) return;
+
+    const { jobs, bikes } = getState();
+
+    dom.jobList.innerHTML = '';
+
+    if (jobs.length === 0) {
+      dom.emptyJobs.classList.remove('is-hidden');
+      dom.jobList.classList.add('is-hidden');
+      return;
+    }
+
+    dom.emptyJobs.classList.add('is-hidden');
+    dom.jobList.classList.remove('is-hidden');
+
+    for (const job of jobs) {
+      const bike = bikes.find((b) => String(b.id) === String(job.bike_id));
+      const bikeLabel = bike ? `${bike.make} ${bike.model}` : 'Unknown bike';
+
+      const card = createJobCard(job, bikeLabel);
+      dom.jobList.appendChild(card);
+    }
   },
 
   errorMessage(
     message: string = '',
-    target: 'login' | 'register' | 'save-bike' | 'logout' = 'login',
+    target:
+      | 'login'
+      | 'register'
+      | 'save-bike'
+      | 'create-job'
+      | 'logout' = 'login',
   ) {
     switch (target) {
       case 'login':
@@ -80,6 +145,9 @@ export const render = {
         break;
       case 'save-bike':
         if (dom.addBikeHint) dom.addBikeHint.textContent = message;
+        break;
+      case 'create-job':
+        if (dom.addJobHint) dom.addJobHint.textContent = message;
         break;
       default:
         break;

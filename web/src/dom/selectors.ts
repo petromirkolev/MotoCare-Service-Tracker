@@ -57,7 +57,17 @@ export const dom = {
 
   /* Jobs screen */
   jobScreen: document.querySelector<HTMLElement>('[data-testid="page-jobs"]'),
-  bikesDropdown: document.querySelector<HTMLSelectElement>(
+  jobBikeSelect: document.querySelector<HTMLSelectElement>(
     '[data-testid="select-job-bike"]',
+  ),
+  jobList: document.querySelector<HTMLElement>('[data-testid="list-jobs"]'),
+  emptyJobs: document.querySelector<HTMLElement>('[data-testid="empty-jobs"]'),
+
+  /* Add job form */
+  addJobForm: document.querySelector<HTMLFormElement>(
+    '[data-testid="form-create-job"]',
+  ),
+  addJobHint: document.querySelector<HTMLElement>(
+    '[data-testid="message-job-error"]',
   ),
 };

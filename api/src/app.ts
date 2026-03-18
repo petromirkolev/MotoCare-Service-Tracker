@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import authRouter from './routes/auth';
 import bikesRouter from './routes/bikes';
+import jobsRouter from './routes/jobs';
 
 const app = express();
 
@@ -13,5 +14,6 @@ app.get('/', (_req, res) => {
 });
 app.use('/auth', authRouter);
 app.use('/bikes', bikesRouter);
+app.use('/jobs', jobsRouter);
 
 export default app;

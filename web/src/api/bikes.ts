@@ -1,5 +1,6 @@
 /* This file contains functions for managing bikes, including fetching, creating, updating, and deleting bikes. */
 
+import { API_BASE_URL } from './base';
 import { getCurrentUser } from '../state/auth-store';
 import { bikeStore } from '../state/bike-store';
 import type {
@@ -9,9 +10,7 @@ import type {
   CreateBikeResponse,
 } from '../types/bikes';
 
-const API_BASE_URL = 'http://localhost:3001';
-
-export async function fetchBikes(): Promise<Bike[]> {
+export async function getBikesApi(): Promise<Bike[]> {
   const currentUser = getCurrentUser();
 
   if (!currentUser) {

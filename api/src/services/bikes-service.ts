@@ -35,23 +35,6 @@ export async function listBikesByUserId(user_id: string): Promise<BikeRow[]> {
   );
 }
 
-export async function updateBike(params: {
-  id: string;
-  user_id: string;
-  make: string;
-  model: string;
-  year: number;
-}): Promise<void> {
-  await runQuery(
-    `
-      UPDATE bikes
-      SET make = ?, model = ?, year = ?
-      WHERE id = ? AND user_id = ?
-    `,
-    [params.make, params.model, params.year, params.id, params.user_id],
-  );
-}
-
 export async function deleteBike(params: {
   id: string;
   user_id: string;

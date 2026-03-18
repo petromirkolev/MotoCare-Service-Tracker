@@ -5,7 +5,9 @@ import { registerUser, loginUser } from '../api/auth';
 import { setCurrentUser } from '../state/auth-store';
 import { readBikeForm } from '../state/bike-store';
 import { createBikeApi, deleteBikeApi } from '../api/bikes';
-import { refreshBikes } from '../state/state-store';
+import { refreshBikes, refreshJobs } from '../state/state-store';
+import { readJobForm } from '../state/job-store';
+import { createJobApi } from '../api/jobs';
 
 type Action =
   | 'show-login-form'
@@ -16,7 +18,8 @@ type Action =
   | 'save-bike'
   | 'delete-bike'
   | 'go-jobs'
-  | 'go-bikes';
+  | 'go-bikes'
+  | 'create-job';
 
 function bindEvents(): void {
   document.addEventListener('click', async (e: MouseEvent) => {
@@ -27,8 +30,6 @@ function bindEvents(): void {
 
     const action = el.dataset.action as Action;
     if (!action) return;
-
-    console.log(action);
 
     switch (action) {
       case 'show-login-form': {
@@ -53,9 +54,9 @@ function bindEvents(): void {
 
           render.errorMessage('Login success, opening garage...', 'login');
 
-          setTimeout(() => {
-            refreshBikes();
-            render.bikeScreen();
+          setTimeout(async () => {
+            await refreshBikes();
+            await render.bikeScreen();
           }, 1000);
         } catch (error) {
           error instanceof Error
@@ -90,8 +91,8 @@ function bindEvents(): void {
         render.initialScreen();
         break;
 
-      case 'save-bike':
-        const addBikeForm = (dom.addBikeForm as HTMLFormElement) || null;
+      case 'save-bike': {
+        const addBikeForm = dom.addBikeForm as HTMLFormElement | null;
         if (!addBikeForm) throw new Error('Missing add bike form');
 
         try {
@@ -106,39 +107,70 @@ function bindEvents(): void {
           await refreshBikes();
 
           addBikeForm.reset();
-          render.errorMessage('', action);
+          render.errorMessage('', 'save-bike');
 
-          render.bikeScreen();
+          await render.bikeScreen();
         } catch (error) {
           error instanceof Error
-            ? render.errorMessage(error.message, action)
-            : render.errorMessage('Something went wrong', action);
+            ? render.errorMessage(error.message, 'save-bike')
+            : render.errorMessage('Something went wrong', 'save-bike');
         }
         break;
+      }
 
-      case 'delete-bike':
+      case 'delete-bike': {
         try {
-          const el = target.closest<HTMLElement>('[data-action]');
-          const id = el?.dataset.bikeId;
-          if (!id) break;
+          const bikeCard = target.closest<HTMLElement>('[data-bike-id]');
+          const id = bikeCard?.dataset.bikeId;
+
+          if (!id) {
+            throw new Error('Missing bike id');
+          }
 
           await deleteBikeApi(id);
           await refreshBikes();
-
-          render.bikeScreen();
+          await render.bikeScreen();
         } catch (error) {
           console.error(error);
         }
         break;
+      }
 
       case 'go-jobs':
-        render.jobScreen();
+        await render.jobScreen();
         break;
 
       case 'go-bikes':
-        refreshBikes();
-        render.bikeScreen();
+        await render.bikeScreen();
         break;
+
+      case 'create-job': {
+        const addJobForm = dom.addJobForm as HTMLFormElement | null;
+        if (!addJobForm) throw new Error('Missing add job form');
+
+        try {
+          const input = readJobForm(addJobForm);
+
+          await createJobApi({
+            bike_id: input.bike_id,
+            service_type: input.service_type,
+            odometer: input.odometer,
+            note: input.note,
+          });
+
+          addJobForm.reset();
+
+          await refreshJobs();
+
+          render.errorMessage('', 'create-job');
+          await render.jobScreen();
+        } catch (error) {
+          error instanceof Error
+            ? render.errorMessage(error.message, 'create-job')
+            : render.errorMessage('Something went wrong', 'create-job');
+        }
+        break;
+      }
     }
   });
 }

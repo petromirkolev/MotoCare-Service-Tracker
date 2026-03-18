@@ -1,16 +1,10 @@
 import { Router } from 'express';
 import { CreateBikeBody } from '../types/bike';
-import {
-  isIntegerInRange,
-  isNonNegativeInteger,
-  normalizeString,
-} from '../utils/validation';
+import { isIntegerInRange, normalizeString } from '../utils/validation';
 import {
   createBike,
   deleteBike,
-  findBikeById,
   listBikesByUserId,
-  updateBike,
 } from '../services/bikes-service';
 
 const bikesRouter = Router();
@@ -76,51 +70,6 @@ bikesRouter.post('/', async (req, res) => {
     res.status(201).json({ message: 'Bike created successfully' });
   } catch (error) {
     console.error('Create bike failed:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-bikesRouter.put('/:id', async (req, res) => {
-  const bike_id = req.params.id;
-  const body = (req.body ?? {}) as CreateBikeBody;
-  const user_id = normalizeString(body.user_id);
-  const make = normalizeString(body.make);
-  const model = normalizeString(body.model);
-  const year = body.year;
-
-  if (!bike_id || !user_id || !make || !model || year === undefined) {
-    res
-      .status(400)
-      .json({ error: 'id, user id, make, model, year, and odo are required' });
-    return;
-  }
-
-  if (year !== undefined && (year < 1900 || year > 2100)) {
-    {
-      res.status(400).json({ error: 'Invalid year' });
-      return;
-    }
-  }
-
-  const existingBike = await findBikeById(bike_id);
-
-  if (!existingBike) {
-    res.status(404).json({ error: 'Bike not found' });
-    return;
-  }
-
-  try {
-    await updateBike({
-      id: bike_id,
-      user_id,
-      make: make.trim(),
-      model: model.trim(),
-      year: Number(year),
-    });
-
-    res.json({ message: 'Bike updated successfully' });
-  } catch (error) {
-    console.error('Update bike failed:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
