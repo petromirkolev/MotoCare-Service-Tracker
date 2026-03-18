@@ -4,14 +4,13 @@ import {
   readRegForm,
   readLoginForm,
   setCurrentUser,
-  getCurrentUser,
 } from '../state/auth-store';
 import { registerUser, loginUser } from '../api/auth';
 import { readBikeForm } from '../state/bike-store';
 import { createBikeApi, deleteBikeApi } from '../api/bikes';
 import { refreshBikes, refreshJobs } from '../state/state-store';
 import { readJobForm } from '../state/job-store';
-import { createJobApi, getJobsApi, updateJobStatusApi } from '../api/jobs';
+import { createJobApi, updateJobStatusApi } from '../api/jobs';
 import { markJobs } from '../utils/dom-helper';
 
 type Action =
@@ -144,6 +143,7 @@ function bindEvents(): void {
 
           await deleteBikeApi(id);
           await refreshBikes();
+          await refreshJobs();
           await render.bikeScreen();
         } catch (error) {
           console.error(error);

@@ -41,6 +41,14 @@ export async function deleteBike(params: {
 }): Promise<void> {
   await runQuery(
     `
+      DELETE FROM jobs
+      WHERE bike_id = ? AND user_id = ?
+    `,
+    [params.id, params.user_id],
+  );
+
+  await runQuery(
+    `
       DELETE FROM bikes
       WHERE id = ? AND user_id = ?
     `,
