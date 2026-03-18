@@ -96,7 +96,7 @@ export const render = {
 
     for (const bike of bikes) {
       const option = document.createElement('option');
-      option.value = String(bike.id);
+      option.value = String(bike.id) ?? '';
       option.textContent = `${bike.make} ${bike.model}`;
       dom.jobBikeSelect.appendChild(option);
     }

@@ -11,7 +11,7 @@ import { createBikeApi, deleteBikeApi } from '../api/bikes';
 import { refreshBikes, refreshJobs } from '../state/state-store';
 import { readJobForm } from '../state/job-store';
 import { createJobApi, updateJobStatusApi } from '../api/jobs';
-import { markJobs } from '../utils/dom-helper';
+import { markJobs, setActiveJobFilter } from '../utils/dom-helper';
 
 type Action =
   | 'show-login-form'
@@ -254,27 +254,33 @@ function bindEvents(): void {
         break;
       }
       case 'filter-jobs-all': {
+        setActiveJobFilter(target);
         const jobCards = document.querySelectorAll<HTMLElement>('.job-card');
         jobCards.forEach((card) => card.classList.remove('is-hidden'));
         break;
       }
       case 'filter-jobs-requested': {
+        setActiveJobFilter(target);
         markJobs('requested');
         break;
       }
       case 'filter-jobs-approved': {
+        setActiveJobFilter(target);
         markJobs('approved');
         break;
       }
       case 'filter-jobs-in-progress': {
+        setActiveJobFilter(target);
         markJobs('in-progress');
         break;
       }
       case 'filter-jobs-done': {
+        setActiveJobFilter(target);
         markJobs('done');
         break;
       }
       case 'filter-jobs-cancelled': {
+        setActiveJobFilter(target);
         markJobs('cancelled');
         break;
       }

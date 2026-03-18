@@ -14,3 +14,13 @@ export function markJobs(status: string) {
       : card.classList.add('is-hidden');
   });
 }
+
+export function setActiveJobFilter(target: HTMLElement): void {
+  const filterButtons = document.querySelectorAll<HTMLElement>('.filter');
+
+  filterButtons.forEach((button) => {
+    button.classList.remove('active');
+  });
+
+  target.classList.add('active');
+}
