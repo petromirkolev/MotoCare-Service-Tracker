@@ -41,14 +41,37 @@ jobs_router.post('/', async (req, res) => {
   const odometer = body.odometer;
   const note = normalizeString(body.note ?? '');
 
-  if (
-    !bike_id ||
-    !service_type ||
-    odometer === undefined ||
-    odometer === null
-  ) {
+  if (!bike_id) {
     res.status(400).json({
-      error: 'bike_id, service_type, and odometer are required',
+      error: 'bike_id is required',
+    });
+    return;
+  }
+
+  if (!service_type) {
+    res.status(400).json({
+      error: 'service_type is required',
+    });
+    return;
+  }
+
+  if (odometer === undefined || odometer === null) {
+    res.status(400).json({
+      error: 'odometer is required',
+    });
+    return;
+  }
+
+  if (odometer < 0) {
+    res.status(400).json({
+      error: 'odometer cannot be a negative integer',
+    });
+    return;
+  }
+
+  if (typeof odometer === 'string') {
+    res.status(400).json({
+      error: 'odometer must be a number',
     });
     return;
   }

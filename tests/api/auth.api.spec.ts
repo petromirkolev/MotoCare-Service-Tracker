@@ -1,23 +1,7 @@
-import { test, expect, APIRequestContext } from '@playwright/test';
-import { uniqueEmail, API_URL, PASSWORD } from '../utils/test-data';
-
-async function registerUser(
-  request: APIRequestContext,
-  email: string,
-  password = PASSWORD,
-): Promise<void> {
-  const response = await request.post(`${API_URL}/auth/register`, {
-    data: {
-      email,
-      password,
-    },
-  });
-
-  expect(response.status()).toBe(201);
-
-  const body = await response.json();
-  expect(body.message).toBe('User registered successfully');
-}
+import { test, expect } from '@playwright/test';
+import { uniqueEmail } from '../utils/test-data';
+import { API_URL, PASSWORD } from '../utils/constants';
+import { registerUser } from '../utils/api-helpers';
 
 test.describe('Auth API test suite', () => {
   let email: string;
