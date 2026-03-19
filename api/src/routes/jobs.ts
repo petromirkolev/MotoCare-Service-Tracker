@@ -77,7 +77,7 @@ jobs_router.post('/', async (req, res) => {
   }
 
   try {
-    await createJob({
+    const id = await createJob({
       user_id,
       bike_id,
       service_type,
@@ -85,7 +85,10 @@ jobs_router.post('/', async (req, res) => {
       note,
     });
 
-    res.status(201).json({ message: 'Job created successfully' });
+    res.status(201).json({
+      message: 'Job created successfully',
+      id,
+    });
   } catch (error) {
     console.error('Create job failed:', error);
     res.status(500).json({ error: 'Internal server error' });

@@ -1,6 +1,7 @@
 import { API_URL, PASSWORD } from './constants';
 import { expect, APIRequestContext } from '@playwright/test';
 import type { LoginResponse } from '../types/login';
+import { JobResponse } from '../types/job';
 
 export async function registerUser(
   request: APIRequestContext,
@@ -104,7 +105,7 @@ export async function addJob(
     odometer: number;
     note: string;
   }> = {},
-): Promise<string> {
+): Promise<JobResponse> {
   const response = await request.post(`${API_URL}/jobs?user_id=${user_id}`, {
     data: {
       bike_id,
@@ -119,7 +120,7 @@ export async function addJob(
   const body = await response.json();
   expect(body.message).toBe('Job created successfully');
 
-  return body.id;
+  return body;
 }
 
 export async function listJobs(
@@ -133,4 +134,26 @@ export async function listJobs(
   const body = await response.json();
 
   return body.jobs;
+}
+
+export async function updateJob(
+  request: APIRequestContext,
+  id: string,
+  user_id: string,
+  status: string,
+): Promise<void> {
+  const response = await request.patch(
+    `${API_URL}/jobs/${id}/status?user_id=${user_id}`,
+    {
+      data: {
+        status,
+      },
+    },
+  );
+
+  expect(response.status()).toBe(200);
+
+  const body = await response.json();
+
+  expect(body.message).toBe('Job status updated successfully');
 }

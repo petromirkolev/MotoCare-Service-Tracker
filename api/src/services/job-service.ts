@@ -8,8 +8,9 @@ export async function createJob(params: {
   service_type: string;
   odometer: number;
   note: string;
-}): Promise<void> {
+}): Promise<string> {
   const now = new Date().toISOString();
+  const id = uuidv4();
 
   await runQuery(
     `
@@ -17,7 +18,7 @@ export async function createJob(params: {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
-      uuidv4(),
+      id,
       params.user_id,
       params.bike_id,
       params.service_type,
@@ -28,6 +29,7 @@ export async function createJob(params: {
       now,
     ],
   );
+  return id;
 }
 
 export async function findJobById(id: string): Promise<JobRow | undefined> {
