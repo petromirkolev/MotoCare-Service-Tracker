@@ -78,23 +78,15 @@ export class BikesPage {
     await expect(bike).toHaveCount(0);
   }
 
-  async addJob(
-    service: string,
-    make: string,
-    model: string,
-    odo: string,
-  ): Promise<void> {
+  async gotoJobsPage(): Promise<void> {
     await this.jobsNav.click();
-    await expect(this.jobsNav).toBeVisible();
+    await expect(this.pageJobs).toBeVisible();
+    await expect(this.pageBikes).toBeHidden();
+  }
 
-    await this.page
-      .getByTestId('select-job-bike')
-      .selectOption(`${make} ${model}`);
-    await this.page
-      .getByTestId('select-job-service-type')
-      .selectOption({ label: service });
-    await this.page.getByTestId('input-job-odometer').fill(odo);
-
-    await this.page.getByTestId('btn-create-job').click();
+  async gotoBikesPage(): Promise<void> {
+    await this.bikeNav.click();
+    await expect(this.pageBikes).toBeVisible();
+    await expect(this.pageJobs).toBeHidden();
   }
 }

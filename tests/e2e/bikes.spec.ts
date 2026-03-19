@@ -3,6 +3,7 @@ import { LoginPage } from '../pages/login-page';
 import { RegisterPage } from '../pages/register-page';
 import { validInput, uniqueEmail } from '../utils/test-data';
 import { BikesPage } from '../pages/bikes-page';
+import { JobsPage } from '../pages/jobs-page';
 
 function seededBike() {
   const suffix = Date.now().toString();
@@ -17,6 +18,7 @@ test.describe('Bikes test suite', () => {
   let loginPage: LoginPage;
   let bikePage: BikesPage;
   let registerPage: RegisterPage;
+  let jobsPage: JobsPage;
   let email: string;
   let password: string;
 
@@ -24,6 +26,7 @@ test.describe('Bikes test suite', () => {
     loginPage = new LoginPage(page);
     bikePage = new BikesPage(page);
     registerPage = new RegisterPage(page);
+    jobsPage = new JobsPage(page);
 
     email = uniqueEmail('login-seeded');
     password = validInput.password;
@@ -190,11 +193,12 @@ test.describe('Bikes test suite', () => {
 
     await expect(bikePage.bikeTag).toHaveText('Ready');
 
-    await bikePage.addJob('Oil Change', bike.make, bike.model, '20000');
+    await bikePage.gotoJobsPage();
 
-    await bikePage.bikeNav.click();
-    await expect(bikePage.pageBikes).toBeVisible();
-    await expect(bikePage.pageJobs).toBeHidden();
+    await jobsPage.addJob('Oil Change', bike.make, bike.model, '20000');
+
+    await bikePage.gotoBikesPage();
+
     await expect(bikePage.bikeTag).toHaveText('Not ready');
   });
 
@@ -206,24 +210,22 @@ test.describe('Bikes test suite', () => {
 
     await expect(bikePage.bikeTag).toHaveText('Ready');
 
-    await bikePage.addJob('Oil Change', bike.make, bike.model, '20000');
+    await bikePage.gotoJobsPage();
 
-    await bikePage.bikeNav.click();
-    await expect(bikePage.pageBikes).toBeVisible();
-    await expect(bikePage.pageJobs).toBeHidden();
+    await jobsPage.addJob('Oil Change', bike.make, bike.model, '20000');
+
+    await bikePage.gotoBikesPage();
+
     await expect(bikePage.bikeTag).toHaveText('Not ready');
 
-    await bikePage.jobsNav.click();
-    await expect(bikePage.pageJobs).toBeVisible();
-    await expect(bikePage.pageBikes).toBeHidden();
+    await bikePage.gotoJobsPage();
 
     await bikePage.pageJobs.getByTestId('btn-job-approve').click();
     await bikePage.pageJobs.getByTestId('btn-job-start').click();
     await bikePage.pageJobs.getByTestId('btn-job-complete').click();
 
-    await bikePage.bikeNav.click();
-    await expect(bikePage.pageBikes).toBeVisible();
-    await expect(bikePage.pageJobs).toBeHidden();
+    await bikePage.gotoBikesPage();
+
     await expect(bikePage.bikeTag).toHaveText('Ready');
   });
 
@@ -235,22 +237,20 @@ test.describe('Bikes test suite', () => {
 
     await expect(bikePage.bikeTag).toHaveText('Ready');
 
-    await bikePage.addJob('Oil Change', bike.make, bike.model, '20000');
+    await bikePage.gotoJobsPage();
 
-    await bikePage.bikeNav.click();
-    await expect(bikePage.pageBikes).toBeVisible();
-    await expect(bikePage.pageJobs).toBeHidden();
+    await jobsPage.addJob('Oil Change', bike.make, bike.model, '20000');
+
+    await bikePage.gotoBikesPage();
+
     await expect(bikePage.bikeTag).toHaveText('Not ready');
 
-    await bikePage.jobsNav.click();
-    await expect(bikePage.pageJobs).toBeVisible();
-    await expect(bikePage.pageBikes).toBeHidden();
+    await bikePage.gotoJobsPage();
 
     await bikePage.pageJobs.getByTestId('btn-job-cancel').click();
 
-    await bikePage.bikeNav.click();
-    await expect(bikePage.pageBikes).toBeVisible();
-    await expect(bikePage.pageJobs).toBeHidden();
+    await bikePage.gotoBikesPage();
+
     await expect(bikePage.bikeTag).toHaveText('Ready');
   });
 });
