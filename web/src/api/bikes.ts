@@ -113,7 +113,7 @@ export async function deleteBikeApi(id: string): Promise<{ message: string }> {
   }
 
   const response = await fetch(
-    `${API_BASE_URL}/bikes/${encodeURIComponent(id)}?userId=${encodeURIComponent(currentUser.id)}`,
+    `${API_BASE_URL}/bikes/${encodeURIComponent(id)}?user_id=${encodeURIComponent(currentUser.id)}`,
     {
       method: 'DELETE',
     },
