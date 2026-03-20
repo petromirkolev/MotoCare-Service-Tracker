@@ -105,6 +105,11 @@ export const render = {
 
     dom.jobBikeSelect.innerHTML = '';
 
+    const emptyOption = document.createElement('option');
+    emptyOption.value = '';
+    emptyOption.textContent = 'Select bike';
+    dom.jobBikeSelect.appendChild(emptyOption);
+
     for (const bike of bikes) {
       const option = document.createElement('option');
       option.value = String(bike.id) ?? '';
