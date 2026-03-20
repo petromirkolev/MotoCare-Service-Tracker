@@ -212,11 +212,15 @@ Then open the local frontend URL shown by Vite.
 
 MotoCare Jobs can also be run through Docker Compose.
 
-## Start the full stack
+### Start the full stack
 
 ```bash
 docker compose up --build
-Stop the containers
+```
+
+### Stop the containers
+
+```bash
 docker compose down
 ```
 
