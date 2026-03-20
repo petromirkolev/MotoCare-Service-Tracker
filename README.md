@@ -228,7 +228,7 @@ docker compose down
 
 ### API / UI tests locally
 
-Run tests from the repo root.
+#### Run tests from the repo root.
 
 ```bash
 npm install
@@ -237,7 +237,7 @@ npm run test:e2e:headed
 npm run test:e2e:ui
 ```
 
-Run tests against the Dockerized app
+#### Run tests against the Dockerized app
 
 ```bash
 npm run docker:test:up
