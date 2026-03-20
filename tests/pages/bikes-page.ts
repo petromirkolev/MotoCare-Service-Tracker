@@ -78,12 +78,6 @@ export class BikesPage {
     await expect(bike).toHaveCount(0);
   }
 
-  async gotoJobsPage(): Promise<void> {
-    await this.jobsNav.click();
-    await expect(this.pageJobs).toBeVisible();
-    await expect(this.pageBikes).toBeHidden();
-  }
-
   async gotoBikesPage(): Promise<void> {
     await this.bikeNav.click();
     await expect(this.pageBikes).toBeVisible();

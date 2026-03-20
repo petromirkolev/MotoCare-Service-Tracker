@@ -193,9 +193,9 @@ test.describe('Bikes test suite', () => {
 
     await expect(bikePage.bikeTag).toHaveText('Ready');
 
-    await bikePage.gotoJobsPage();
+    await jobsPage.gotoJobsPage();
 
-    await jobsPage.addJob('Oil Change', bike.make, bike.model, '20000');
+    await jobsPage.addJob('Oil Change', `${bike.make} ${bike.model}`, '20000');
 
     await bikePage.gotoBikesPage();
 
@@ -210,15 +210,15 @@ test.describe('Bikes test suite', () => {
 
     await expect(bikePage.bikeTag).toHaveText('Ready');
 
-    await bikePage.gotoJobsPage();
+    await jobsPage.gotoJobsPage();
 
-    await jobsPage.addJob('Oil Change', bike.make, bike.model, '20000');
+    await jobsPage.addJob('Oil Change', `${bike.make} ${bike.model}`, '20000');
 
     await bikePage.gotoBikesPage();
 
     await expect(bikePage.bikeTag).toHaveText('Not ready');
 
-    await bikePage.gotoJobsPage();
+    await jobsPage.gotoJobsPage();
 
     await bikePage.pageJobs.getByTestId('btn-job-approve').click();
     await bikePage.pageJobs.getByTestId('btn-job-start').click();
@@ -237,15 +237,15 @@ test.describe('Bikes test suite', () => {
 
     await expect(bikePage.bikeTag).toHaveText('Ready');
 
-    await bikePage.gotoJobsPage();
+    await jobsPage.gotoJobsPage();
 
-    await jobsPage.addJob('Oil Change', bike.make, bike.model, '20000');
+    await jobsPage.addJob('Oil Change', `${bike.make} ${bike.model}`, '20000');
 
     await bikePage.gotoBikesPage();
 
     await expect(bikePage.bikeTag).toHaveText('Not ready');
 
-    await bikePage.gotoJobsPage();
+    await jobsPage.gotoJobsPage();
 
     await bikePage.pageJobs.getByTestId('btn-job-cancel').click();
 
