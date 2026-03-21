@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import sqlite3 from 'sqlite3';
 
-const DB_PATH = process.env.DB_PATH || './data/motocarejobs.sqlite';
+const DB_PATH = process.env.DB_PATH || './data/motocareservice.sqlite';
 const DB_DIR = path.dirname(DB_PATH);
 
 if (!fs.existsSync(DB_DIR)) {

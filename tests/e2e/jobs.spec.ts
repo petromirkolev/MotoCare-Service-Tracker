@@ -215,7 +215,10 @@ test.describe('Jobs test suite', () => {
       await jobsPage.expectJobVisible(job.chainService);
     });
 
-    test('"All" filter shows all jobs', async () => {
+    test('"All" filter shows all jobs', async ({ page }) => {
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.mouse.wheel(0, 250);
+
       await jobsPage.filterJobs('all');
 
       await jobsPage.expectJobVisible(job.oilService);

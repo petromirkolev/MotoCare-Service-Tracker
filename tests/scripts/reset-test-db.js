@@ -3,7 +3,7 @@ const path = require('path');
 
 const dbPath = path.resolve(
   __dirname,
-  '../../api/data/motocarejobs.test.sqlite',
+  '../../api/data/motocareservice.test.sqlite',
 );
 
 if (fs.existsSync(dbPath)) {
