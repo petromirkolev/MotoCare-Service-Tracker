@@ -1,17 +1,17 @@
 services:
   api:
     build: ./api
-    container_name: motocare-jobs-api
+    container_name: motocare-service-api
     ports:
       - '3001:3001'
     volumes:
       - ./api/data:/app/data
     environment:
-      - DB_PATH=./data/motocarejobs.sqlite
+      - DB_PATH=./data/motocareservice.sqlite
 
   web:
     build: ./web
-    container_name: motocare-jobs-web
+    container_name: motocare-service-web
     ports:
       - '4173:4173'
     depends_on:

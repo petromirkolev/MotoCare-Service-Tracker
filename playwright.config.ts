@@ -21,7 +21,7 @@ export default defineConfig({
       cwd: './api',
       env: {
         ...process.env,
-        DB_PATH: './data/motocarejobs.test.sqlite',
+        DB_PATH: './data/motocareservice.test.sqlite',
       },
       url: 'http://localhost:3001/',
       reuseExistingServer: true,

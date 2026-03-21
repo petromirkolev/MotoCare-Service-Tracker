@@ -1,4 +1,4 @@
 services:
   api:
     environment:
-      - DB_PATH=./data/motocarejobs.test.sqlite
+      - DB_PATH=./data/motocareservice.test.sqlite

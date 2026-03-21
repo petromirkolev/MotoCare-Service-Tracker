@@ -1,5 +1,5 @@
 {
-  "name": "motocare-jobs",
+  "name": "motocare-service-tracker",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -20,16 +20,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/petromirkolev/motocare-jobs.git"
+    "url": "git+https://github.com/petromirkolev/motocare-service-tracker.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/petromirkolev/motocare-jobs/issues"
+    "url": "https://github.com/petromirkolev/motocare-service-tracker/issues"
   },
-  "homepage": "https://github.com/petromirkolev/motocare-jobs#readme",
+  "homepage": "https://github.com/petromirkolev/motocare-service-tracker#readme",
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.5.0",
