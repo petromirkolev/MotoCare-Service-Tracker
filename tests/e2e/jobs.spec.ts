@@ -199,7 +199,7 @@ test.describe('Jobs test suite', () => {
   });
 
   test.describe('Jobs filtering test suite', () => {
-    test.beforeEach(async () => {
+    test.beforeEach(async ({ page }) => {
       await jobsPage.addJob(
         job.oilService,
         `${bike.make} ${bike.model}`,
@@ -213,12 +213,17 @@ test.describe('Jobs test suite', () => {
         job.odo,
       );
       await jobsPage.expectJobVisible(job.chainService);
+
+      await page.evaluate(() => window.scrollTo(0, 0));
+
+      await expect
+        .poll(async () => {
+          return await page.evaluate(() => window.scrollY);
+        })
+        .toBe(0);
     });
 
     test('"All" filter shows all jobs', async ({ page }) => {
-      await page.evaluate(() => window.scrollTo(0, 0));
-      await page.mouse.wheel(0, 250);
-
       await jobsPage.filterJobs('all');
 
       await jobsPage.expectJobVisible(job.oilService);
@@ -273,6 +278,7 @@ test.describe('Jobs test suite', () => {
       await jobsPage.expectJobNotVisible(job.chainService);
     });
   });
+
   test.describe('Jobs integrity test suite', () => {
     test('Deleting a bike removes related jobs from UI', async () => {
       await jobsPage.addJob(
