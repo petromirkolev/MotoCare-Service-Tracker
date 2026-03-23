@@ -30,24 +30,48 @@ jobs_router.post('/', async (req, res) => {
     const service_type = (0, validation_1.normalizeString)(body.service_type);
     const odometer = body.odometer;
     const note = (0, validation_1.normalizeString)(body.note ?? '');
-    if (!bike_id ||
-        !service_type ||
-        odometer === undefined ||
-        odometer === null) {
+    if (!bike_id) {
         res.status(400).json({
-            error: 'bike_id, service_type, and odometer are required',
+            error: 'bike_id is required',
+        });
+        return;
+    }
+    if (!service_type) {
+        res.status(400).json({
+            error: 'service_type is required',
+        });
+        return;
+    }
+    if (odometer === undefined || odometer === null) {
+        res.status(400).json({
+            error: 'odometer is required',
+        });
+        return;
+    }
+    if (odometer < 0) {
+        res.status(400).json({
+            error: 'odometer cannot be a negative integer',
+        });
+        return;
+    }
+    if (typeof odometer === 'string') {
+        res.status(400).json({
+            error: 'odometer must be a number',
         });
         return;
     }
     try {
-        await (0, job_service_1.createJob)({
+        const id = await (0, job_service_1.createJob)({
             user_id,
             bike_id,
             service_type,
             odometer,
             note,
         });
-        res.status(201).json({ message: 'Job created successfully' });
+        res.status(201).json({
+            message: 'Job created successfully',
+            id,
+        });
     }
     catch (error) {
         console.error('Create job failed:', error);

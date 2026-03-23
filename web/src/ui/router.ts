@@ -45,8 +45,6 @@ function bindEvents(): void {
     const action = el.dataset.action as Action;
     if (!action) return;
 
-    console.log(action);
-
     switch (action) {
       case 'show-login-form': {
         const forms = document.querySelectorAll('form');

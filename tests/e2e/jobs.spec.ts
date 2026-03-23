@@ -76,7 +76,10 @@ test.describe('Jobs test suite', () => {
 
       await page.reload();
 
+      await page.waitForTimeout(500);
+
       await jobsPage.gotoJobsPage();
+
       await jobsPage.expectJobVisible(job.oilService);
     });
 
@@ -230,12 +233,17 @@ test.describe('Jobs test suite', () => {
       await jobsPage.expectJobVisible(job.chainService);
     });
 
-    test('"Requested" filter shows only requested jobs', async () => {
+    test('"Requested" filter shows only requested jobs', async ({ page }) => {
       await jobsPage.markJobAs(job.oilService, 'approved');
 
       await jobsPage.filterJobs('requested');
 
+      await page.waitForTimeout(500);
+
       await jobsPage.expectJobVisible(job.chainService);
+
+      await page.waitForTimeout(500);
+
       await jobsPage.expectJobNotVisible(job.oilService);
     });
 

@@ -10,13 +10,13 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const uuid_1 = require("uuid");
 const db_helpers_1 = require("../db-helpers");
 async function findUserByEmail(email) {
-    return (0, db_helpers_1.getOne)('SELECT * FROM users WHERE email = ?', [email]);
+    return (0, db_helpers_1.getOne)('SELECT * FROM users WHERE email = $1', [email]);
 }
 async function createUser(email, password) {
     const password_hash = await bcrypt_1.default.hash(password, 10);
     await (0, db_helpers_1.runQuery)(`
       INSERT INTO users (id, email, password_hash, created_at)
-      VALUES (?, ?, ?, ?)
+      VALUES ($1, $2, $3, $4)
     `, [(0, uuid_1.v4)(), email, password_hash, new Date().toISOString()]);
 }
 async function verifyUserPassword(password, password_hash) {

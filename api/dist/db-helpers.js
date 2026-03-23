@@ -4,36 +4,14 @@ exports.runQuery = runQuery;
 exports.getOne = getOne;
 exports.getAll = getAll;
 const db_1 = require("./db");
-function runQuery(sql, params = []) {
-    return new Promise((resolve, reject) => {
-        db_1.db.run(sql, params, (err) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve();
-        });
-    });
+async function runQuery(sql, params = []) {
+    await db_1.db.query(sql, params);
 }
-function getOne(sql, params = []) {
-    return new Promise((resolve, reject) => {
-        db_1.db.get(sql, params, (err, row) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve(row);
-        });
-    });
+async function getOne(sql, params = []) {
+    const result = await db_1.db.query(sql, params);
+    return result.rows[0];
 }
-function getAll(sql, params = []) {
-    return new Promise((resolve, reject) => {
-        db_1.db.all(sql, params, (err, rows) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve(rows);
-        });
-    });
+async function getAll(sql, params = []) {
+    const result = await db_1.db.query(sql, params);
+    return result.rows;
 }

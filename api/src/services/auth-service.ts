@@ -12,7 +12,7 @@ export type UserRow = {
 export async function findUserByEmail(
   email: string,
 ): Promise<UserRow | undefined> {
-  return getOne<UserRow>('SELECT * FROM users WHERE email = ?', [email]);
+  return getOne<UserRow>('SELECT * FROM users WHERE email = $1', [email]);
 }
 
 export async function createUser(
@@ -24,7 +24,7 @@ export async function createUser(
   await runQuery(
     `
       INSERT INTO users (id, email, password_hash, created_at)
-      VALUES (?, ?, ?, ?)
+      VALUES ($1, $2, $3, $4)
     `,
     [uuidv4(), email, password_hash, new Date().toISOString()],
   );

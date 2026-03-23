@@ -6,6 +6,7 @@ export const dom = {
   loginButton: document.querySelector<HTMLButtonElement>(
     '[data-testid="tab-login"]',
   ),
+
   registerButton: document.querySelector<HTMLButtonElement>(
     '[data-testid="tab-register"]',
   ),
@@ -27,6 +28,7 @@ export const dom = {
   ),
 
   /* Topbar */
+  topBar: document.querySelector<HTMLElement>('[data-testid="topbar"]'),
   currentUserEmail: document.querySelector<HTMLElement>(
     '[data-testid="text-current-user-email"]',
   ),

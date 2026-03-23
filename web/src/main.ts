@@ -10,8 +10,10 @@ async function bootstrap() {
   if (user) {
     await refreshBikes();
     await render.bikeScreen();
+    render.topbar();
   } else {
     render.initialScreen();
+    render.topbar();
   }
 
   bindEvents();

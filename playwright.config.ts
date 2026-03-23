@@ -1,4 +1,7 @@
+import * as dotenv from 'dotenv';
 import { defineConfig, devices } from '@playwright/test';
+
+dotenv.config({ path: 'api/.env' });
 
 export default defineConfig({
   testDir: './tests',
@@ -21,7 +24,7 @@ export default defineConfig({
       cwd: './api',
       env: {
         ...process.env,
-        DB_PATH: './data/motocareservice.test.sqlite',
+        DATABASE_URL: process.env.TEST_DATABASE_URL,
       },
       url: 'http://localhost:3001/',
       reuseExistingServer: true,

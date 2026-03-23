@@ -13,7 +13,7 @@ export async function createBike(params: {
   await runQuery(
     `
       INSERT INTO bikes (id, user_id, make, model, year, created_at)
-      VALUES (?, ?, ?, ?, ?, ?)
+      VALUES ($1, $2, $3, $4, $5, $6)
     `,
     [
       id,
@@ -28,12 +28,12 @@ export async function createBike(params: {
 }
 
 export async function findBikeById(id: string): Promise<BikeRow | undefined> {
-  return getOne<BikeRow>('SELECT * FROM bikes WHERE id = ?', [id]);
+  return getOne<BikeRow>('SELECT * FROM bikes WHERE id = $1', [id]);
 }
 
 export async function listBikesByUserId(user_id: string): Promise<BikeRow[]> {
   return getAll<BikeRow>(
-    'SELECT * FROM bikes WHERE user_id = ? ORDER BY created_at DESC',
+    'SELECT * FROM bikes WHERE user_id = $1 ORDER BY created_at DESC',
     [user_id],
   );
 }
@@ -45,7 +45,7 @@ export async function deleteBike(params: {
   await runQuery(
     `
       DELETE FROM jobs
-      WHERE bike_id = ? AND user_id = ?
+      WHERE bike_id = $1 AND user_id = $2
     `,
     [params.id, params.user_id],
   );
@@ -53,7 +53,7 @@ export async function deleteBike(params: {
   await runQuery(
     `
       DELETE FROM bikes
-      WHERE id = ? AND user_id = ?
+      WHERE id = $1 AND user_id = $2
     `,
     [params.id, params.user_id],
   );

@@ -12,18 +12,23 @@ export const render = {
     showAuthForm('login');
     this.errorMessage('', 'login');
     this.errorMessage('', 'register');
+    dom.topBar?.classList.add('is-hidden');
   },
 
   loginScreen(): void {
     showScreen('auth');
     showAuthForm('login');
     this.errorMessage('', 'login');
+    dom.loginButton?.classList.add('active');
+    dom.registerButton?.classList.remove('active');
   },
 
   registerScreen(): void {
     showScreen('auth');
     showAuthForm('register');
     this.errorMessage('', 'register');
+    dom.registerButton?.classList.add('active');
+    dom.loginButton?.classList.remove('active');
   },
 
   async bikeScreen(): Promise<void> {
@@ -141,6 +146,10 @@ export const render = {
       const card = createJobCard(job, bikeLabel);
       dom.jobList.appendChild(card);
     }
+  },
+
+  topbar(): void {
+    dom.topBar?.classList.toggle('is-hidden');
   },
 
   errorMessage(
