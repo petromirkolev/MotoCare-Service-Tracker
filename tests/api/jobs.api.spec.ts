@@ -14,12 +14,12 @@ test.describe('Jobs API', () => {
     test('Create job with valid data succeeds', async ({
       request,
       loginResult,
-      garageWithOneBike,
+      garageWithBike,
       validJobData,
     }) => {
       await addJobApi(
         request,
-        garageWithOneBike.body.bike.id,
+        garageWithBike.body.bike.id,
         loginResult.body.user.id,
         { ...validJobData },
       );
@@ -33,9 +33,7 @@ test.describe('Jobs API', () => {
         body.jobs.every((job) => job.user_id === loginResult.body.user.id),
       ).toBeTruthy();
       expect(
-        body.jobs.every(
-          (job) => job.bike_id === garageWithOneBike.body.bike.id,
-        ),
+        body.jobs.every((job) => job.bike_id === garageWithBike.body.bike.id),
       ).toBeTruthy();
       expect(body.jobs.every((job) => job.status === 'requested')).toBeTruthy();
     });
@@ -43,7 +41,6 @@ test.describe('Jobs API', () => {
     test('Create job with missing bike_id is rejected', async ({
       request,
       loginResult,
-      garageWithOneBike,
     }) => {
       const response = await addJobApi(
         request,
@@ -66,11 +63,11 @@ test.describe('Jobs API', () => {
     test('Create job with missing service_type is rejected', async ({
       request,
       loginResult,
-      garageWithOneBike,
+      garageWithBike,
     }) => {
       const response = await addJobApi(
         request,
-        garageWithOneBike.body.bike.id,
+        garageWithBike.body.bike.id,
         loginResult.body.user.id,
         { odometer: 24500, note: 'Change the oil' },
       );
@@ -85,11 +82,11 @@ test.describe('Jobs API', () => {
     test('Create job with missing odometer is rejected', async ({
       request,
       loginResult,
-      garageWithOneBike,
+      garageWithBike,
     }) => {
       const response = await addJobApi(
         request,
-        garageWithOneBike.body.bike.id,
+        garageWithBike.body.bike.id,
         loginResult.body.user.id,
         { service_type: 'Oil change', note: 'Change the oil' },
       );
@@ -104,11 +101,11 @@ test.describe('Jobs API', () => {
     test('Create job with invalid negative odometer is rejected', async ({
       request,
       loginResult,
-      garageWithOneBike,
+      garageWithBike,
     }) => {
       const response = await addJobApi(
         request,
-        garageWithOneBike.body.bike.id,
+        garageWithBike.body.bike.id,
         loginResult.body.user.id,
         {
           service_type: 'Oil change',
@@ -127,11 +124,11 @@ test.describe('Jobs API', () => {
     test('Create job with invalid string odometer is rejected', async ({
       request,
       loginResult,
-      garageWithOneBike,
+      garageWithBike,
     }) => {
       const response = await addJobApi(
         request,
-        garageWithOneBike.body.bike.id,
+        garageWithBike.body.bike.id,
         loginResult.body.user.id,
         {
           service_type: 'Oil change',
@@ -150,12 +147,12 @@ test.describe('Jobs API', () => {
     test('Jobs list returns only current user jobs', async ({
       request,
       loginResult,
-      garageWithOneBike,
+      garageWithBike,
       validJobData,
     }) => {
       await addJobApi(
         request,
-        garageWithOneBike.body.bike.id,
+        garageWithBike.body.bike.id,
         loginResult.body.user.id,
         { ...validJobData },
       );
@@ -194,7 +191,7 @@ test.describe('Jobs API', () => {
       ).toBeTruthy();
       expect(
         user_1_body.jobs.every(
-          (job) => job.bike_id === garageWithOneBike.body.bike.id,
+          (job) => job.bike_id === garageWithBike.body.bike.id,
         ),
       ).toBeTruthy();
 
@@ -213,7 +210,7 @@ test.describe('Jobs API', () => {
     test('Update non-existing job is rejected', async ({
       request,
       loginResult,
-      garageWithOneBike,
+      garageWithBike,
     }) => {
       const response = await updateJobApi(
         request,
@@ -228,7 +225,7 @@ test.describe('Jobs API', () => {
     test('Update other user job is rejected', async ({
       request,
       loginResult,
-      garageWithOneBike,
+      garageWithBike,
       validJobData,
     }) => {
       const email = uniqueEmail();
@@ -261,101 +258,161 @@ test.describe('Jobs API', () => {
   test.describe('Valid job status transitions', () => {
     test('Requested > Approved job transition is accepted', async ({
       request,
+      bikeWithOneJob,
     }) => {
-      await updateJob(request, id, user_id, 'approved');
-      const jobs = await listJobs(request, user_id);
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'approved',
+      );
 
-      expect(jobs.every((job) => job.status === 'approved')).toBeTruthy();
+      const jobs = await listJobsApi(request, bikeWithOneJob.user_id);
+
+      const response = await jobs.json();
+
+      expect(
+        response.jobs.every((job) => job.status === 'approved'),
+      ).toBeTruthy();
     });
 
     test('Approved > In progress job transition is accepted', async ({
       request,
+      bikeWithOneJob,
     }) => {
-      await updateJob(request, id, user_id, 'approved');
-      await updateJob(request, id, user_id, 'in_progress');
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'approved',
+      );
 
-      const jobs = await listJobs(request, user_id);
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'in_progress',
+      );
 
-      expect(jobs.every((job) => job.status === 'in_progress')).toBeTruthy();
-      expect(jobs.every((job) => job.status === 'approved')).toBeFalsy();
+      const jobs = await listJobsApi(request, bikeWithOneJob.user_id);
+
+      const response = await jobs.json();
+
+      expect(
+        response.jobs.every((job) => job.status === 'in_progress'),
+      ).toBeTruthy();
     });
 
     test('In progress > Done job transition is accepted', async ({
       request,
+      bikeWithOneJob,
     }) => {
-      await updateJob(request, id, user_id, 'approved');
-      await updateJob(request, id, user_id, 'in_progress');
-      await updateJob(request, id, user_id, 'done');
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'approved',
+      );
 
-      const jobs = await listJobs(request, user_id);
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'in_progress',
+      );
 
-      expect(jobs.every((job) => job.status === 'done')).toBeTruthy();
-      expect(jobs.every((job) => job.status === 'in_progress')).toBeFalsy();
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'done',
+      );
+
+      const jobs = await listJobsApi(request, bikeWithOneJob.user_id);
+
+      const response = await jobs.json();
+
+      expect(response.jobs.every((job) => job.status === 'done')).toBeTruthy();
     });
 
     test('Requested > Cancelled job transition is accepted', async ({
       request,
+      bikeWithOneJob,
     }) => {
-      await updateJob(request, id, user_id, 'cancelled');
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'cancelled',
+      );
 
-      const jobs = await listJobs(request, user_id);
+      const jobs = await listJobsApi(request, bikeWithOneJob.user_id);
 
-      expect(jobs.every((job) => job.status === 'cancelled')).toBeTruthy();
+      const response = await jobs.json();
+
+      expect(
+        response.jobs.every((job) => job.status === 'cancelled'),
+      ).toBeTruthy();
     });
 
     test('Approved > Cancelled job transition is accepted', async ({
       request,
+      bikeWithOneJob,
     }) => {
-      await updateJob(request, id, user_id, 'approved');
-      await updateJob(request, id, user_id, 'cancelled');
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'approved',
+      );
 
-      const jobs = await listJobs(request, user_id);
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'cancelled',
+      );
 
-      expect(jobs.every((job) => job.status === 'cancelled')).toBeTruthy();
-      expect(jobs.every((job) => job.status === 'approved')).toBeFalsy();
+      const jobs = await listJobsApi(request, bikeWithOneJob.user_id);
+
+      const response = await jobs.json();
+
+      expect(
+        response.jobs.every((job) => job.status === 'cancelled'),
+      ).toBeTruthy();
     });
   });
 
   test.describe('Invalid job status transitions', () => {
-    let bike_id: string;
-    let job: JobResponse;
-    let id: string;
-
-    test.beforeEach(async ({ request }) => {
-      bike_id = await addBike(request, user_id);
-      job = await addJob(request, bike_id, user_id);
-      id = job.id;
-    });
-
-    test('Requested > Done job transition is rejected', async ({ request }) => {
-      const response = await request.patch(
-        `${API_URL}/jobs/${id}/status?user_id=${user_id}`,
-        {
-          data: {
-            status: 'done',
-          },
-        },
+    test('Requested > Done job transition is rejected', async ({
+      request,
+      bikeWithOneJob,
+    }) => {
+      const response = await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'done',
       );
 
       expect(response.status()).toBe(400);
 
-      const resBody = await response.json();
+      const body = await response.json();
 
-      expect(resBody.error).toBe(
+      expect(body.error).toBe(
         'Invalid status transition from requested to done',
       );
     });
 
     test('Requested > In progress job transition is rejected', async ({
       request,
+      bikeWithOneJob,
     }) => {
-      const response = await request.patch(
-        `${API_URL}/jobs/${id}/status?user_id=${user_id}`,
-        {
-          data: {
-            status: 'in_progress',
-          },
-        },
+      const response = await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'in_progress',
       );
 
       expect(response.status()).toBe(400);
@@ -367,16 +424,21 @@ test.describe('Jobs API', () => {
       );
     });
 
-    test('Approved > Done job transition is rejected', async ({ request }) => {
-      await updateJob(request, id, user_id, 'approved');
-
-      const response = await request.patch(
-        `${API_URL}/jobs/${id}/status?user_id=${user_id}`,
-        {
-          data: {
-            status: 'done',
-          },
-        },
+    test('Approved > Done job transition is rejected', async ({
+      request,
+      bikeWithOneJob,
+    }) => {
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'approved',
+      );
+      const response = await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'done',
       );
 
       expect(response.status()).toBe(400);
@@ -388,18 +450,36 @@ test.describe('Jobs API', () => {
       );
     });
 
-    test('Done > Approved job transition is rejected', async ({ request }) => {
-      await updateJob(request, id, user_id, 'approved');
-      await updateJob(request, id, user_id, 'in_progress');
-      await updateJob(request, id, user_id, 'done');
+    test('Done > Approved job transition is rejected', async ({
+      request,
+      bikeWithOneJob,
+    }) => {
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'approved',
+      );
 
-      const response = await request.patch(
-        `${API_URL}/jobs/${id}/status?user_id=${user_id}`,
-        {
-          data: {
-            status: 'approved',
-          },
-        },
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'in_progress',
+      );
+
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'done',
+      );
+
+      const response = await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'approved',
       );
 
       expect(response.status()).toBe(400);
@@ -413,16 +493,20 @@ test.describe('Jobs API', () => {
 
     test('Cancelled > Approved job transition is rejected', async ({
       request,
+      bikeWithOneJob,
     }) => {
-      await updateJob(request, id, user_id, 'cancelled');
+      await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'cancelled',
+      );
 
-      const response = await request.patch(
-        `${API_URL}/jobs/${id}/status?user_id=${user_id}`,
-        {
-          data: {
-            status: 'approved',
-          },
-        },
+      const response = await updateJobApi(
+        request,
+        bikeWithOneJob.job.id,
+        bikeWithOneJob.user_id,
+        'approved',
       );
 
       expect(response.status()).toBe(400);
