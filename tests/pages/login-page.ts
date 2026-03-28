@@ -2,6 +2,7 @@ import { Page, Locator, expect } from '@playwright/test';
 
 export class LoginPage {
   readonly page: Page;
+  readonly loginForm: Locator;
   readonly loginEmail: Locator;
   readonly loginPassword: Locator;
   readonly loginButton: Locator;
@@ -9,6 +10,7 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
+    this.loginForm = page.getByTestId('form-login');
     this.loginEmail = page.getByTestId('input-login-email');
     this.loginPassword = page.getByTestId('input-login-password');
     this.loginButton = page.getByTestId('btn-login');
