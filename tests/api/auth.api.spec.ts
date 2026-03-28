@@ -1,6 +1,10 @@
-import { test, expect } from '../fixtures/api';
-import { registerUserApi, loginUserApi } from '../utils/api-helpers';
-import { uniqueEmail } from '../utils/test-data';
+import {
+  test,
+  expect,
+  uniqueEmail,
+  registerUserApi,
+  loginUserApi,
+} from '../fixtures/api';
 
 test.describe('Auth API', () => {
   test('Register with valid credentials succeeds', async ({

@@ -1,13 +1,16 @@
-import { test, expect } from '../fixtures/api';
-import { uniqueEmail } from '../utils/test-data';
 import {
+  test,
+  expect,
+  uniqueEmail,
   addBikeApi,
+  addJobApi,
+} from '../fixtures/api';
+import {
   registerUser,
   loginUser,
   addBike,
   listBikesApi,
   deleteBikeApi,
-  addJobApi,
   listJobsApi,
 } from '../utils/api-helpers';
 

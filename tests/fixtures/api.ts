@@ -139,4 +139,11 @@ export const test = base.extend<ApiFixtures>({
   },
 });
 
-export { expect };
+export {
+  expect,
+  uniqueEmail,
+  registerUserApi,
+  loginUserApi,
+  addBikeApi,
+  addJobApi,
+};
