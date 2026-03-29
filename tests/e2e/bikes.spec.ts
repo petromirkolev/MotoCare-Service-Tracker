@@ -100,30 +100,23 @@ test.describe('Bikes', () => {
   });
 
   test('User can delete bike successfully', async ({
-    loggedInUser,
-    seededBike,
+    garageWithOneBike,
     bikesPage,
   }) => {
-    await bikesPage.addBike(seededBike);
-    await bikesPage.expectBikeVisible(seededBike.make);
-
-    await bikesPage.deleteBikeByName(seededBike.make);
-    await bikesPage.expectBikeNotVisible(seededBike.make);
+    await bikesPage.deleteBikeByName(garageWithOneBike.make);
+    await bikesPage.expectBikeNotVisible(garageWithOneBike.make);
   });
 
   test('Bike delete persists after refresh', async ({
-    loggedInUser,
-    seededBike,
+    garageWithOneBike,
     bikesPage,
   }) => {
-    await bikesPage.addBike(seededBike);
-
-    await bikesPage.deleteBikeByName(seededBike.make);
-    await bikesPage.expectBikeNotVisible(seededBike.make);
+    await bikesPage.deleteBikeByName(garageWithOneBike.make);
+    await bikesPage.expectBikeNotVisible(garageWithOneBike.make);
 
     await bikesPage.page.reload();
 
-    await bikesPage.expectBikeNotVisible(seededBike.make);
+    await bikesPage.expectBikeNotVisible(garageWithOneBike.make);
   });
 
   test('Empty state is shown when user has no added bikes', async ({
@@ -148,15 +141,12 @@ test.describe('Bikes', () => {
   });
 
   test('User sees his own bikes only', async ({
-    loggedInUser,
+    garageWithOneBike,
     seededBike,
     bikesPage,
     registerPage,
     loginPage,
   }) => {
-    await bikesPage.addBike(seededBike);
-    await bikesPage.expectBikeVisible(seededBike.make);
-
     await bikesPage.logoutButton.click();
 
     await registerPage.gotoreg();
@@ -164,7 +154,7 @@ test.describe('Bikes', () => {
     const email = uniqueEmail();
     const password = validInput.password;
 
-    await registerPage.register(email, password);
+    await registerPage.register(email, password, password);
     await registerPage.expectSuccess('Registration successful!');
 
     await loginPage.goto();
@@ -174,32 +164,24 @@ test.describe('Bikes', () => {
   });
 
   test('Bike shows "Ready" when it has no open jobs', async ({
-    loggedInUser,
-    seededBike,
+    garageWithOneBike,
     bikesPage,
   }) => {
-    await bikesPage.addBike(seededBike);
-    await bikesPage.expectBikeVisible(seededBike.make);
-
     await expect(bikesPage.bikeTag).toHaveText('Ready');
   });
 
   test('Bike shows "Not ready" when it has open jobs', async ({
-    loggedInUser,
-    seededBike,
+    garageWithOneBike,
     bikesPage,
     jobsPage,
   }) => {
-    await bikesPage.addBike(seededBike);
-    await bikesPage.expectBikeVisible(seededBike.make);
-
     await expect(bikesPage.bikeTag).toHaveText('Ready');
 
     await jobsPage.gotoJobsPage();
 
     await jobsPage.addJob(
       'Oil Change',
-      `${seededBike.make} ${seededBike.model}`,
+      `${garageWithOneBike.make} ${garageWithOneBike.model}`,
       '20000',
     );
 
@@ -209,21 +191,17 @@ test.describe('Bikes', () => {
   });
 
   test('Bike shows "Ready" when open job is done', async ({
-    loggedInUser,
-    seededBike,
+    garageWithOneBike,
     bikesPage,
     jobsPage,
   }) => {
-    await bikesPage.addBike(seededBike);
-    await bikesPage.expectBikeVisible(seededBike.make);
-
     await expect(bikesPage.bikeTag).toHaveText('Ready');
 
     await jobsPage.gotoJobsPage();
 
     await jobsPage.addJob(
       'Oil Change',
-      `${seededBike.make} ${seededBike.model}`,
+      `${garageWithOneBike.make} ${garageWithOneBike.model}`,
       '20000',
     );
 
@@ -243,21 +221,17 @@ test.describe('Bikes', () => {
   });
 
   test('Bike shows "Ready" when open job is cancelled', async ({
-    loggedInUser,
-    seededBike,
+    garageWithOneBike,
     bikesPage,
     jobsPage,
   }) => {
-    await bikesPage.addBike(seededBike);
-    await bikesPage.expectBikeVisible(seededBike.make);
-
     await expect(bikesPage.bikeTag).toHaveText('Ready');
 
     await jobsPage.gotoJobsPage();
 
     await jobsPage.addJob(
       'Oil Change',
-      `${seededBike.make} ${seededBike.model}`,
+      `${garageWithOneBike.make} ${garageWithOneBike.model}`,
       '20000',
     );
 

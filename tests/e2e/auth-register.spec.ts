@@ -1,4 +1,4 @@
-import { test, validInput, uniqueEmail } from '../fixtures/auth';
+import { test } from '../fixtures/auth';
 
 test.describe('Register page', () => {
   test.beforeEach(async ({ registerPage }) => {
@@ -12,6 +12,7 @@ test.describe('Register page', () => {
     await registerPage.register(
       registrationData.email,
       registrationData.password,
+      registrationData.password,
     );
 
     await registerPage.expectSuccess('Registration successful!');
@@ -24,6 +25,7 @@ test.describe('Register page', () => {
     await registerPage.register(
       registrationData.email,
       registrationData.password,
+      registrationData.password,
     );
     await registerPage.expectSuccess('Registration successful!');
 
@@ -31,6 +33,7 @@ test.describe('Register page', () => {
 
     await registerPage.register(
       registrationData.email,
+      registrationData.password,
       registrationData.password,
     );
 
@@ -47,7 +50,11 @@ test.describe('Register page', () => {
     registerPage,
     registrationData,
   }) => {
-    await registerPage.register('', registrationData.password);
+    await registerPage.register(
+      '',
+      registrationData.password,
+      registrationData.password,
+    );
 
     await registerPage.expectError('Email is required');
   });
@@ -56,7 +63,11 @@ test.describe('Register page', () => {
     registerPage,
     registrationData,
   }) => {
-    await registerPage.register(registrationData.email, '');
+    await registerPage.register(
+      registrationData.email,
+      '',
+      registrationData.password,
+    );
 
     await registerPage.expectError('Password is required');
   });
@@ -65,10 +76,11 @@ test.describe('Register page', () => {
     registerPage,
     registrationData,
   }) => {
-    await registerPage.fillEmail(registrationData.email);
-    await registerPage.fillPassword(registrationData.password);
-    await registerPage.fillConfirmPassword('');
-    await registerPage.submit();
+    await registerPage.register(
+      registrationData.email,
+      registrationData.password,
+      '',
+    );
 
     await registerPage.expectError('Confirm password is required');
   });
@@ -77,10 +89,11 @@ test.describe('Register page', () => {
     registerPage,
     registrationData,
   }) => {
-    await registerPage.fillEmail(registrationData.email);
-    await registerPage.fillPassword(registrationData.password);
-    await registerPage.fillConfirmPassword('testingthepass');
-    await registerPage.submit();
+    await registerPage.register(
+      registrationData.email,
+      registrationData.password,
+      'testingthepass',
+    );
 
     await registerPage.expectError('Passwords do not match');
   });

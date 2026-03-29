@@ -1,3 +1,4 @@
+import { bikeStore } from '../../web/src/state/bike-store';
 import {
   test as base,
   expect,
@@ -15,6 +16,11 @@ type BikeFixtures = {
     model: string;
     year: string;
   };
+  garageWithOneBike: {
+    make: string;
+    model: string;
+    year: string;
+  };
 };
 
 export const test = base.extend<BikeFixtures>({
@@ -23,9 +29,7 @@ export const test = base.extend<BikeFixtures>({
     const password = validInput.password;
 
     await registerPage.gotoreg();
-
-    await registerPage.register(email, password);
-
+    await registerPage.register(email, password, password);
     await registerPage.expectSuccess('Registration successful!');
 
     await expect(loginPage.loginForm).toBeVisible();
@@ -33,6 +37,14 @@ export const test = base.extend<BikeFixtures>({
     await loginPage.login(email, password);
 
     await use({ email, password });
+  },
+
+  garageWithOneBike: async ({ loggedInUser, bikesPage, seededBike }, use) => {
+    const bike = seededBike;
+
+    await bikesPage.addBike(bike);
+
+    await use({ ...bike });
   },
 
   seededBike: async ({}, use) => {
