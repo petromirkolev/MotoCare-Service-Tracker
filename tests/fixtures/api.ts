@@ -18,9 +18,6 @@ type ApiFixtures = {
   };
 
   loginResult: {
-    email: string;
-    password: string;
-    response: APIResponse;
     body: LoginResponse;
   };
 
@@ -42,7 +39,6 @@ type ApiFixtures = {
 
   bikeWithOneJob: {
     job: JobResponse;
-    user_id: string;
   };
 };
 
@@ -56,71 +52,42 @@ export const test = base.extend<ApiFixtures>({
     await use({ email, password, response });
   },
 
-  loginResult: async ({ request }, use) => {
-    const email = uniqueEmail();
-    const password = validInput.password;
-
-    await registerUserApi(request, email, password);
-
-    const response = await loginUserApi(request, email, password);
+  loginResult: async ({ request, registrationResult }, use) => {
+    const response = await loginUserApi(
+      request,
+      registrationResult.email,
+      registrationResult.password,
+    );
 
     const body = (await response.json()) as LoginResponse;
 
-    await use({ email, password, response, body });
+    await use({ body });
   },
 
-  garageWithBike: async ({ request }, use) => {
-    const email = uniqueEmail();
-    const password = validInput.password;
+  garageWithBike: async ({ request, loginResult, validBikeData }, use) => {
+    const user_id = loginResult.body.user.id;
 
-    await registerUserApi(request, email, password);
-
-    const loginResponse = await loginUserApi(request, email, password);
-
-    const loginBody = (await loginResponse.json()) as LoginResponse;
-
-    const user_id = loginBody.user.id;
-
-    const bikeResponse = await addBikeApi(request, user_id, {
-      make: 'Yamaha',
-      model: 'Tracer 9GT',
-      year: 2021,
-    });
+    const bikeResponse = await addBikeApi(request, user_id, validBikeData);
 
     const body = (await bikeResponse.json()) as BikeResponse;
 
     await use({ body });
   },
 
-  bikeWithOneJob: async ({ request }, use) => {
-    const email = uniqueEmail();
-    const password = validInput.password;
-
-    await registerUserApi(request, email, password);
-
-    const loginResponse = await loginUserApi(request, email, password);
-
-    const loginBody = (await loginResponse.json()) as LoginResponse;
-
-    const user_id = loginBody.user.id;
-
-    const bikeResponse = await addBikeApi(request, user_id, {
-      make: 'Yamaha',
-      model: 'Tracer 9GT',
-      year: 2021,
-    });
-
-    const bikeBody = (await bikeResponse.json()) as BikeResponse;
-
-    const jobResponse = await addJobApi(request, bikeBody.bike.id, user_id, {
-      service_type: 'Oil change',
-      odometer: 1000,
-      note: 'Change the oil',
-    });
+  bikeWithOneJob: async (
+    { request, loginResult, garageWithBike, validJobData },
+    use,
+  ) => {
+    const jobResponse = await addJobApi(
+      request,
+      garageWithBike.body.bike.id,
+      loginResult.body.user.id,
+      validJobData,
+    );
 
     const job = await jobResponse.json();
 
-    await use({ job, user_id });
+    await use({ job });
   },
 
   validBikeData: async ({}, use) => {
