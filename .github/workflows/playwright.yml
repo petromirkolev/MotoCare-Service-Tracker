@@ -39,7 +39,7 @@ jobs:
         working-directory: ./web
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install chromium
 
       - name: Run Playwright tests
         run: npm run test:local
