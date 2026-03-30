@@ -11,11 +11,10 @@ MotoCare Service Tracker is a full-stack motorcycle service workflow app built a
 - building and testing a stateful full-stack workflow app
 - frontend and backend validation working together
 - backend-driven job status transitions
-- Playwright E2E coverage across real user flows
-- Playwright API coverage for backend contracts and validation
+- Playwright E2E and API coverage
 - CI execution through GitHub Actions
 - testability-focused design: stable data-testid selectors, reusable Page Objects, isolated test data, and Dockerized local runs
-- real deployment with **Render + Neon**
+- real deployment with **Render + Neon**, plus local source-based and Docker-based test workflows
 
 ---
 
@@ -58,7 +57,7 @@ MotoCare Service Tracker is a full-stack motorcycle service workflow app built a
 
 ### Job statuses
 
-MotoCare Jobs supports these statuses:
+MotoCare Service Tracker supports these statuses:
 
 - "requested"
 - "approved"
@@ -101,7 +100,7 @@ Jobs can be filtered by status:
 
 - **Frontend:** Vite + Vanilla TypeScript
 - **Backend:** Node.js + Express + TypeScript
-- **Database:** PostgreSQL (Neon)
+- **Database:** PostgreSQL (local Docker for development/tests, Neon in production)
 - **Containerization:** Docker + Docker Compose
 - **Testing:** Playwright
 - **CI:** GitHub Actions
@@ -116,8 +115,9 @@ Jobs can be filtered by status:
 /api    -> backend REST API (Node + Express + TypeScript)
 /tests  -> Playwright API + UI tests
 /docs   -> screenshots / assets
-Neon    -> PostgreSQL persistence layer
-Render  -> frontend + backend hosting
+Local   -> frontend/backend from source + PostgreSQL in Docker
+Docker  -> full local containerized stack
+Prod    -> Render + Neon deployment
 ```
 
 ## Test coverage
@@ -179,38 +179,68 @@ The project includes both Playwright E2E tests and Playwright API tests.
 
 Playwright is initialized at the repo root because tests target the whole system, not just the frontend.
 
-### Root test harness
+The project supports two execution modes:
+
+- **Local** - frontend/backend run from source on the machine, PostgreSQL runs in Docker
+- **Docker** - frontend/backend/database all run in Docker
+
+### Run Playwright locally
 
 ```bash
 npm install
-npm run test:e2e
+npm run db:create
+npm run db:up
+npm run test:local
+npm run db:down
 ```
 
 ### Other available commands
 
 ```bash
-npm run test:e2e:ui
-npm run test:e2e:headed
-npm run test:e2e:debug
+npm run test:local:ui
+
 ```
 
 ### Run against Dockerized app
 
 ```bash
+npm run test:docker:fresh
+```
+
+Or step by step:
+
+```bash
+npm run db:test:reset
 npm run docker:test:up
-npm run test:docker
+npm run docker:test
 npm run docker:test:down
 ```
 
 ### Running locally
 
-You need to run both the backend and the frontend.
+MotoCare Service Tracker supports a local development setup where:
 
-Before starting locally, configure the API environment:
+- **API** runs from source on your machine
+- **frontend** runs from source on your machine
+- **PostgreSQL** runs in Docker
+
+### Environment files
+
+The API uses separate environment files for local development and automated tests.
+
+Example local development values:
 
 ```text
-DATABASE_URL=your_dev_database_url
-TEST_DATABASE_URL=your_test_database_url
+PORT=3001
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/motocare_service_dev
+TEST_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/motocare_service_test
+NODE_ENV=development
+```
+
+### Start PostgreSQL
+
+```bash
+npm run db:up
 ```
 
 ### Terminal 1 — API
@@ -236,6 +266,11 @@ Then open the frontend URL shown in the terminal.
 ```bash
 docker compose up --build
 ```
+
+### App URLs
+
+- **Frontend**: http://localhost:4173
+- **API**: http://localhost:3001
 
 Stop containers with:
 
