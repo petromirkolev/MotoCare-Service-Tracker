@@ -131,31 +131,20 @@ export class JobsPage {
       | 'all'
       | 'requested'
       | 'approved'
-      | 'inprogress'
+      | 'in-progress'
       | 'done'
       | 'cancelled',
   ): Promise<void> {
-    switch (criteria) {
-      case 'all':
-        this.filterAllButton.click();
-        break;
-      case 'requested':
-        this.filterRequestedButton.click();
-        break;
-      case 'approved':
-        this.filterApprovedButton.click();
-        break;
-      case 'inprogress':
-        this.filterInProgressButton.click();
-        break;
-      case 'done':
-        this.filterDoneButton.click();
-        break;
-      case 'cancelled':
-        this.filterCancelledButton.click();
-        break;
-      default:
-        break;
+    const button = this.page.getByTestId(`filter-jobs-${criteria}`);
+
+    await expect(button).toBeVisible();
+    await expect(button).toBeEnabled();
+
+    const classes = (await button.getAttribute('class')) ?? '';
+
+    if (!classes.includes('active')) {
+      await button.click();
+      await expect(button).toHaveClass(/active/);
     }
   }
 }

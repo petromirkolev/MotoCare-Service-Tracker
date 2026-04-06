@@ -181,7 +181,7 @@ test.describe('Jobs', () => {
       await jobsPage.markJobAs(bikeWithTwoJobs.firstJob.service, 'approved');
       await jobsPage.markJobAs(bikeWithTwoJobs.firstJob.service, 'started');
 
-      await jobsPage.filterJobs('inprogress');
+      await jobsPage.filterJobs('in-progress');
 
       await jobsPage.expectJobVisible(bikeWithTwoJobs.firstJob.service);
       await jobsPage.expectJobNotVisible(bikeWithTwoJobs.secondJob.service);
