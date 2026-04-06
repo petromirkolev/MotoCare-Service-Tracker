@@ -59,6 +59,8 @@ export class JobsPage {
     await this.jobSelectService.selectOption(service);
     await this.jobSelectOdo.fill(odo);
     await this.jobAddButton.click();
+
+    await this.expectJobVisible(service);
   }
 
   async expectJobVisible(name: string): Promise<void> {
